@@ -1,0 +1,404 @@
+html{
+    box-sizing: border-box;
+}
+
+*,
+*::before,
+*::after{
+    box-sizing: inherit;
+}
+
+a{
+    color: inherit;
+    text-decoration: none;
+}
+
+button{
+    padding: 0;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+}
+
+ul{
+    list-style: none;
+}
+
+body{
+    font-family: 'Inter', sans-serif;
+    color: #000;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.2;
+}
+
+.container{
+    max-width: 1220px;
+    padding: 0 10px;
+    margin: 0 auto;
+}
+
+.header{
+    background: linear-gradient(180deg, #CADBEB 0%, rgba(235, 235, 235, 0.00) 100%);
+    height: 100vh;
+}
+
+.menu__item.active .menu__link {
+    background-color: #000;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 5px;
+}
+
+.menu__item.active .menu__link:hover {
+    background-color: #333;
+    color: #fff;
+}
+
+/* Основные стили ссылок в меню */
+.menu__link {
+    display: inline-block; /* Делает ссылку блочно-строчной */
+    padding: 10px 20px; /* Добавляет отступы вокруг текста */
+    border-radius: 5px; /* Добавляет закругленные углы */
+    transition: background-color 0.3s, color 0.3s; /* Плавный переход для фона и цвета */
+}
+
+/* Подсветка ссылок при наведении */
+.menu__link:hover {
+    background-color: #333; /* Цвет фона при наведении */
+    color: #fff; /* Цвет текста при наведении */
+}
+
+.header__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 40px 0;
+    position: relative;
+}
+
+.menu__btn{
+    padding: 15px 58px;
+    border-radius: 30px;
+    background-color: #000;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #fff;
+}
+
+.header__content {
+    padding-top: 250px;
+    text-align: center;
+}
+
+.header__content--orders {
+    padding-top: 0px;
+}
+
+.header__content-images {
+    text-align: center;
+    padding-bottom: 50px;
+}
+
+.title {
+    font-size: 2.5em;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.description {
+    font-size: 1.2em;
+    margin-bottom: 40px;
+}
+
+.manual-button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #000;
+    color: #fff;
+    border-radius: 5px;
+    font-size: 1em;
+    font-weight: 700;
+    text-align: center;
+    margin-top: 20px;
+    text-decoration: none;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.manual-button:hover {
+    background-color: #333;
+    color: #fff;
+}
+
+.logout {
+    padding: 10px 20px;
+    background-color: #000;
+    color: #fff;
+    border-radius: 5px;
+    font-size: 1em;
+    font-weight: 700;
+}
+
+.logout-button {
+    background: url('door-icon.png') no-repeat center center;
+    background-size: contain;
+    border: none;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    margin-left: 10px; /* Добавленный отступ слева */
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+.logout-button:hover {
+    transform: scale(1.1); /* Увеличение кнопки при наведении */
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.logo img {
+    width: 40px;
+}
+
+.main-content {
+    padding: 20px 0;
+}
+
+.page-title {
+    font-size: 2em;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.orders-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background-color: #fff; /* Белый фон для таблицы */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Лёгкая тень для улучшения видимости */
+}
+
+.orders-table th,
+.orders-table td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+.orders-table th {
+    background-color: #f5f5f5; /* Светло-серый фон для заголовков */
+    border-bottom: 2px solid #ccc; /* Более толстая нижняя рамка для заголовков */
+}
+
+.menu__toggle {
+    display: none;
+    flex-direction: column;
+    justify-content: space-around;
+    width: 24px;
+    height: 24px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    z-index: 10;
+    position: absolute;
+    right: 10px; /* Позиционирование справа */
+    top: 50%; /* Центрирование по вертикали */
+    transform: translateY(-50%);
+}
+
+.menu__toggle:focus {
+    outline: none;
+}
+
+.menu__icon {
+    width: 24px;
+    height: 3px;
+    background: #000;
+    border-radius: 10px;
+    transition: all 0.3s linear;
+    position: relative;
+    transform-origin: 1px;
+}
+
+.menu__list {
+    display: flex;
+    align-items: center;
+    gap: 0 40px;
+    font-weight: 700;
+}
+
+.menu__list--active {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    position: absolute;
+    top: 60px;
+    right: 10px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    z-index: 15; /* Поверх затемняющего слоя */
+}
+
+.menu__list--active .menu__item {
+    text-align: center;
+}
+
+/* Стили для затемняющего слоя */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s, visibility 0.3s;
+    z-index: 5;
+}
+
+.overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Стили для страницы входа */
+.login-container {
+  max-width: 400px;
+  margin: 100px auto;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #fff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.login-container h1 {
+  margin-bottom: 20px;
+}
+
+.login-container label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.login-container input {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+.login-container button {
+  padding: 10px 20px;
+  border: none;
+  background-color: #000;
+  color: #fff;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.login-container button:hover {
+  background-color: #333;
+}
+
+.current-tab {
+    display: none;
+    margin-left: 0px;
+    text-decoration-color: #000;
+}
+
+.currency-rate {
+    font-size: 16px;
+}
+
+@media (max-width: 1469px) {
+    .header__content-images img {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 820px) {
+    .current-tab {
+        display: inline;
+        vertical-align: bottom;
+        font-size: 18px;
+    }
+
+    .currency-rate {
+        font-size: 18px; /* Увеличенный размер шрифта для мобильных устройств */
+        margin-left: -40px;
+    }
+
+    .menu__toggle {
+        display: flex;  
+    }
+
+    .menu__list {
+        display: none;
+    }
+
+    .menu__list.menu__list--active {
+        display: flex;
+    }
+
+    .header__content--orders {
+        padding-top: 50px; /* Уменьшить отступ для мобильных устройств */
+    }
+
+    .orders-table {
+        margin: 0; /* Отступы слева и справа */
+    }
+
+    .orders-table th,
+    .orders-table td {
+        font-size: 12px;
+    }
+
+    .header__top {
+        padding: 20px 0; /* Уменьшить отступ для мобильных устройств */
+        width: 100%;
+    }
+
+    .logo {
+        display: flex;
+        align-items: center;
+    }
+
+    .logo img {
+        margin-right: 10px;
+        width: 30px;
+    }
+
+    .logo__symbol {
+        text-decoration-color: #000;
+        vertical-align: bottom;
+    }
+
+    .header__content {
+        padding: 20px;
+    }
+
+    .title {
+        font-size: 2em;
+    }
+
+    .description {
+        font-size: 1em;
+    }
+
+    .logout {
+        width: 100%;
+        padding: 10px 0;
+    }
+}

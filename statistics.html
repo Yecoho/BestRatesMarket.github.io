@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Stat</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="reset.css">
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="favicon.ico" type="image/x-icon"> <!-- Добавление фавикона -->
+  <style>
+    .statistics-container {
+      overflow-x: auto;
+      padding-bottom: 10px;
+    }
+
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background-color: #fff; /* Белый фон для таблицы */
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Лёгкая тень для улучшения видимости */
+    }
+
+    .table th,
+    .table td {
+      padding: 10px;
+      border: 1px solid #ddd;
+      text-align: left;
+      background-color: #f9f9f9; /* Цвет фона ячеек */
+    }
+
+    .table th {
+      background-color: #f2f2f2; /* Цвет фона заголовков */
+    }
+
+    .table tr:nth-child(even) td {
+      background-color: #f2f2f2; /* Цвет фона для четных строк */
+    }
+
+    .table tr:hover td {
+      background-color: #e0e0e0; /* Цвет фона при наведении */
+    }
+
+    @media (max-width: 820px) {
+      .statistics-container {
+        overflow-x: auto;
+        padding-bottom: 10px;
+      }
+
+      .table {
+        margin: 0;
+        width: 600px; /* Установите минимальную ширину для обеспечения горизонтальной прокрутки */
+      }
+
+      .table th,
+      .table td {
+        font-size: 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <div class="header__top">
+        <div class="logo">
+          <img src="logo.svg" alt="">
+          <span class="current-tab">Stat</span>
+        </div>
+        <div id="currency-rate" class="currency-rate"></div>
+        <nav class="menu">
+          <button class="menu__toggle" aria-label="Toggle menu">
+            <span class="menu__icon"></span>
+            <span class="menu__icon"></span>
+            <span class="menu__icon"></span>
+          </button>
+          <ul class="menu__list">
+            <li class="menu__item">
+              <a class="menu__link" href="index.html">Main</a>
+            </li>
+            <li class="menu__item">
+              <a class="menu__link" href="orders.html">Requests</a>
+            </li>
+            <li class="menu__item">
+              <a class="menu__link" href="appeals.html">Disputes</a>
+            </li>
+            <li class="menu__item">
+              <a class="menu__link" href="balance.html">Finance</a>
+            </li>
+            <li class="menu__item active">
+              <a class="menu__link" href="statistics.html">Stat</a>
+            </li>
+            <li class="menu__item">
+              <a class="menu__link" href="methods.html">Bank Details</a>
+            </li>
+            <li class="menu__item">
+              <button class="logout-button" id="logoutButton"></button>
+            </li>
+          </ul>
+        </nav>
+      </div>
+      <div class="header__content header__content--orders">
+        <div class="header__content-images statistics-container">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Total Orders</th>
+                <th>Successful Orders</th>
+                <th>Success Amount (USDT)</th>
+              </tr>
+            </thead>
+            <tbody id="stats-tbody">
+              <!-- Здесь будут строки с данными статистики -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="overlay"></div>
+  </header>
+
+  <script src="auth-check.js"></script>
+  <script src="logout.js"></script>
+  <script src="main.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        window.location.href = 'login.html';
+      } else {
+        // Получение текущего курса валют
+        fetch('http://localhost:3000/api/currency')
+          .then(response => response.json())
+          .then(data => {
+            const currencyRateElement = document.getElementById('currency-rate');
+            currencyRateElement.textContent = `1 USDT = ${data.rate} RUB`;
+          })
+          .catch(error => console.error('Error fetching currency rate:', error));
+      }
+    });
+  </script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const token = localStorage.getItem('token');
+
+      if (!token) {
+        window.location.href = 'login.html';
+      } else {
+        fetch('http://localhost:3000/api/statistics', {
+          method: 'GET',
+          headers: {
+            'Authorization': token
+          }
+        })
+        .then(response => response.json())
+        .then(stats => {
+          const statsTbody = document.getElementById('stats-tbody');
+          statsTbody.innerHTML = '';
+
+          stats.forEach(stat => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td>${stat.date}</td>
+              <td>${stat.totalOrders}</td>
+              <td>${stat.successfulOrders}</td>
+              <td>${stat.successAmount}</td>
+            `;
+            statsTbody.appendChild(row);
+          });
+        })
+        .catch(error => {
+          console.error('Error fetching statistics:', error);
+        });
+
+        // Обработчик события клика для кнопки выхода
+        document.getElementById('logoutButton').addEventListener('click', function() {
+          localStorage.removeItem('token');
+          window.location.href = 'login.html';
+        });
+      }
+    });
+  </script>
+</body>
+</html>

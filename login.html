@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Login</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="favicon.ico" type="image/x-icon"> <!-- Добавление фавикона -->
+  <style>
+    body {
+      background-image: url('logo-background.png');
+      background-size: 40%; /* Уменьшаем размер фона */
+      background-position: center center; /* Центрируем фон по горизонтали и вертикали */
+      background-repeat: no-repeat;
+      height: 100vh; /* Высота экрана */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0;
+    }
+
+    .login-container {
+      width: 300px; /* Установите ширину формы */
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      background-color: rgba(255, 255, 255, 0.8); /* Прозрачный фон для лучшего отображения фона */
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+    .login-container h1 {
+      margin-bottom: 20px;
+    }
+    .login-container label {
+      display: block;
+      margin-bottom: 5px;
+    }
+    .login-container input {
+      width: calc(100% - 20px);
+      padding: 8px;
+      margin-bottom: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+    .login-container button {
+      padding: 10px 20px;
+      border: none;
+      background-color: #000;
+      color: #fff;
+      border-radius: 5px;
+      cursor: pointer;
+      width: 100%;
+    }
+    .login-container button:hover {
+      background-color: #333;
+    }
+    .login-btn {
+      font-weight: bold;
+    }
+
+    @media (max-width: 820px) {
+      body {
+        background-size: 100%; /* Увеличиваем размер фона на мобильных устройствах */
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <h1>Login</h1>
+    <form id="login-form">
+      <div>
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" required>
+      </div>
+      <div>
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" required>
+      </div>
+      <button type="submit" class="login-btn">Login</button>
+    </form>
+    <div id="error-message" style="color: red;"></div>
+  </div>
+  <script src="auth.js"></script>
+</body>
+</html>

@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Finance</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="reset.css">
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="favicon.ico" type="image/x-icon"> <!-- Добавление фавикона -->
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+
+    .balance-container {
+      text-align: left;
+      padding-top: 20px;
+    }
+    .balance-container h1 {
+      text-align: center;
+    }
+    .balance-input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 16px;
+    }
+    .balance-button {
+      width: 100%;
+      padding: 10px;
+      background-color: black;
+      color: white;
+      border: none;
+      font-weight: bold;
+      border-radius: 4px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    .balance-button:hover {
+      background-color: #333;
+    }
+    .balance-info {
+      font-size: 18px;
+      margin-top: 20px;
+    }
+    .balance-now {
+      font-weight: bold;
+    }
+    .header__top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .header__content {
+      padding-top: 20px;
+    }
+    .balance-description {
+      margin-top: 20px;
+      margin-bottom: 20px;
+    }
+    .monospace {
+      font-weight: bold;
+      font-family: 'Courier New', Courier, monospace;
+    }
+    .wallet-address {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 10px;
+      font-size: 18px;
+      font-family: 'Courier New', monospace; /* Моноширинный шрифт */
+    }
+
+    @media (max-width: 820px) {
+      .description,
+      .balance-description {
+        font-size: 14px;
+      }
+      .balance-container {
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+      .balance-input,
+      .balance-button {
+        font-size: 14px;
+      }
+      .balance-info {
+        font-size: 14px;
+      }
+      .wallet-address {
+        font-size: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <div class="header__top">
+        <div class="logo">
+          <img src="logo.svg" alt="">
+          <span class="current-tab">Finance</span>
+        </div>
+        <div id="currency-rate" class="currency-rate"></div>
+        <nav class="menu">
+          <button class="menu__toggle" aria-label="Toggle menu">
+            <span class="menu__icon"></span>
+            <span class="menu__icon"></span>
+            <span class="menu__icon"></span>
+          </button>
+          <ul class="menu__list">
+            <li class="menu__item">
+              <a class="menu__link" href="index.html">Main</a>
+            </li>
+            <li class="menu__item">
+              <a class="menu__link" href="orders.html">Requests</a>
+            </li>
+            <li class="menu__item">
+              <a class="menu__link" href="appeals.html">Disputes</a>
+            </li>
+            <li class="menu__item active">
+              <a class="menu__link" href="balance.html">Finance</a>
+            </li>
+            <li class="menu__item">
+              <a class="menu__link" href="statistics.html">Stat</a>
+            </li>
+            <li class="menu__item methods">
+              <a class="menu__link" href="methods.html">Bank Details</a>
+            </li>
+            <li class="menu__item">
+              <button class="logout-button" id="logoutButton"></button>
+            </li>
+          </ul>
+        </nav>
+      </div>
+      <div class="header__content balance-container">
+        <h1 class="title">Пополнение баланса</h1>
+        <p class="description balance-description">
+          Для пополнения переведите необходимую сумму в USDT на кошелек:
+          <span class="monospace">TWBZXMeWMcWLr4nYFLwXgdof3Lufag2k1b</span>
+        </p>        
+        <div class="balance-info">
+          Ваш текущий баланс: <span id="current-balance" class="balance-now">Загрузка...</span> USDT
+        </div>
+        <input type="text" id="transactionHash" class="balance-input" placeholder="Введите хэш транзакции">
+        <button id="submitTransaction" class="balance-button">Подтвердить</button>
+      </div>
+    </div>
+    <div class="overlay"></div>
+  </header>
+
+  <script src="auth-check.js"></script>
+  <script src="logout.js"></script>
+  <script src="main.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const token = localStorage.getItem('token');
+      const currentBalanceElement = document.getElementById('current-balance');
+      const submitTransactionButton = document.getElementById('submitTransaction');
+      const transactionHashInput = document.getElementById('transactionHash');
+
+      if (!token) {
+        window.location.href = 'login.html';
+      } else {
+        fetch('http://localhost:3000/api/currency')
+          .then(response => response.json())
+          .then(data => {
+            const currencyRateElement = document.getElementById('currency-rate');
+            currencyRateElement.textContent = `1 USDT = ${data.rate} RUB`;
+          })
+          .catch(error => console.error('Error fetching currency rate:', error));
+
+        fetch('http://localhost:3000/api/balance', {
+          method: 'GET',
+          headers: {
+            'Authorization': token
+          }
+        })
+        .then(response => response.json())
+        .then(data => {
+          currentBalanceElement.textContent = data.balance;
+        })
+        .catch(error => {
+          console.error('Error fetching balance:', error);
+          currentBalanceElement.textContent = 'Ошибка загрузки';
+        });
+
+        submitTransactionButton.addEventListener('click', function() {
+          const transactionHash = transactionHashInput.value.trim();
+          console.log('Transaction hash:', transactionHash);
+          fetch('http://localhost:3000/api/balance', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': token
+            },
+            body: JSON.stringify({ transactionHash })
+          })
+          .then(response => response.json())
+          .then(data => {
+            console.log('Server response:', data);
+            if (data.message === 'Balance updated successfully') {
+              // Обновление текущего баланса на странице без жесткого кодирования суммы
+              fetch('http://localhost:3000/api/balance', {
+                method: 'GET',
+                headers: {
+                  'Authorization': token
+                }
+              })
+              .then(response => response.json())
+              .then(data => {
+                currentBalanceElement.textContent = data.balance;
+              })
+              .catch(error => {
+                console.error('Error fetching balance:', error);
+              });
+            }
+          })
+          .catch(error => {
+            console.error('Error:', error);
+            alert('Ошибка пополнения баланса');
+          });
+        });
+        // Обработчик события клика для кнопки выхода
+        document.getElementById('logoutButton').addEventListener('click', function() {
+          localStorage.removeItem('token');
+          window.location.href = 'login.html';
+        });
+      }
+    });
+  </script>
+</body>
+</html>

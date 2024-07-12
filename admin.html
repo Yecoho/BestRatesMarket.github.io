@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Admin Panel</title>
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="favicon.ico" type="image/x-icon"> <!-- Добавление фавикона -->
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f5f5f5;
+    }
+
+    .bold-text {
+      font-weight: bold; /* Сделать текст жирным */
+    }
+
+    .admin-panel {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      max-width: 800px;
+      width: 100%;
+    }
+
+    .admin-panel h1 {
+      margin-bottom: 20px;
+      font-size: 24px;
+      text-align: center;
+    }
+
+    .admin-panel form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .admin-panel form input,
+    .admin-panel form button {
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 16px;
+    }
+
+    .admin-panel form button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .admin-panel form button:hover {
+      background-color: #0056b3;
+    }
+
+    .admin-button {
+      width: 100%;
+      padding: 10px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      font-weight: bold;
+      border-radius: 4px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .admin-button1 {
+      width: 100%;
+      padding: 10px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      font-weight: bold;
+      border-radius: 4px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 10px;
+      margin-bottom: 10px; /* Добавленный отступ снизу */
+    }
+
+    .admin-button:hover {
+      background-color: #0056b3;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.4);
+    }
+
+    .modal-content {
+      background-color: #fefefe;
+      margin: 5% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 90%;
+      max-width: 1200px;
+      border-radius: 4px;
+      overflow-x: auto; /* Горизонтальная прокрутка */
+      position: relative; /* Для позиционирования кнопки закрытия */
+    }
+
+    .modal-content h2 {
+      display: inline-block; /* Отображаем заголовок в виде инлайн-блока */
+      margin-bottom: 20px; /* Добавленный отступ вниз */
+      margin-right: 20px; /* Отступ справа для значка закрытия */
+    }
+
+    .close {
+      position: absolute; /* Абсолютное позиционирование */
+      top: 10px; /* Отступ сверху */
+      right: 20px; /* Отступ справа */
+      color: #aaa;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .close:hover,
+    .close:focus {
+      color: black;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .methods-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background-color: #fff;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .methods-table th,
+    .methods-table td {
+      padding: 10px;
+      border: 1px solid #ddd;
+      text-align: left;
+    }
+
+    .methods-table th {
+      background-color: #f5f5f5;
+      border-bottom: 2px solid #ccc;
+    }
+
+    .order-list {
+      margin-top: 20px;
+    }
+
+    .order-item {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 20px; /* Увеличение высоты фона */
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      margin-bottom: 10px;
+      background-color: #f9f9f9; /* Добавить цвет фона */
+    }
+
+    .order-buttons {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px; /* Промежуток между кнопками */
+      margin-top: 10px;
+      width: 100%; /* Растягиваем кнопки на всю ширину */
+    }
+
+    .edit-button,
+    .delete-button {
+      width: 48%; /* Делает кнопки на всю ширину */
+      padding: 10px;
+      font-size: 16px;
+      font-weight: bold;
+      border: none;
+      cursor: pointer;
+      border-radius: 4px;
+      text-align: center;
+    }
+
+    .edit-button {
+      background-color: #007bff;
+      color: white;
+    }
+
+    .delete-button {
+      background-color: #dc3545;
+      color: white;
+    }
+
+    .log {
+      margin-top: 20px;
+      padding: 10px;
+      background-color: #f9f9f9;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      max-height: 200px;
+      overflow-y: auto;
+      font-size: 14px;
+    }
+
+
+    .edit-button:hover {
+      background-color: #0056b3;
+    }
+
+    .delete-button:hover {
+      background-color: #c82333;
+    }
+
+    .order-item span {
+      margin-bottom: 10px; /* Добавлено для отступа между текстом и кнопками */
+    }
+
+    .modal-input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 16px;
+    }
+
+    .modal-save-button {
+      width: 100%;
+      padding: 10px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      font-weight: bold;
+      border-radius: 4px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .modal-save-button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <div class="admin-panel">
+    <h1>Admin Panel</h1>
+    <form id="currency-form">
+      <input type="number" id="currencyRate" placeholder="Currency Rate (RUB/USDT)" step="0.01" required>
+      <button type="submit" class="bold-text">Update Rate</button>
+    </form>
+    <br>
+    <form id="order-form">
+      <input type="text" id="username" placeholder="Username" required>
+      <input type="number" id="orderSum" placeholder="Order Sum" required>
+      <input type="number" id="orderRate" placeholder="Order Rate" required>
+      <input type="text" id="orderStatus" placeholder="Order Status" required>
+      <input type="text" id="orderAccount" placeholder="Order Account" required>
+      <input type="date" id="orderDate" placeholder="Order Date" required>
+      <button type="submit" class="bold-text">Add Order</button>
+    </form>
+    <button id="viewOrdersButton" class="admin-button1">Check Orders</button>
+    <button id="viewCardsButton" class="admin-button">All Cards</button>
+    <button id="toggleAutoOrderButton" class="admin-button1">Enable Auto Orders</button>
+    <div id="log" class="log"></div> <!-- Добавьте этот элемент -->
+  </div>
+
+  <div id="cardsModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>All Cards</h2>
+      <table class="methods-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Username</th>
+            <th>Method Name</th>
+            <th>Card Number</th>
+            <th>Cardholder</th>
+            <th>Creation Date</th>
+          </tr>
+        </thead>
+        <tbody id="cards-body">
+          <!-- Список карт будет отображаться здесь -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Всплывающее окно для списка заказов -->
+  <div id="ordersModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>All Orders</h2>
+      <div class="order-list" id="order-list">
+        <!-- Список заказов будет отображаться здесь -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Всплывающее окно для редактирования статуса заказа -->
+  <div id="editModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>Edit Order Status</h2>
+      <input type="text" id="editStatus" class="modal-input" placeholder="Order Status">
+      <button id="saveEdit" class="modal-save-button">Save changes</button>
+    </div>
+  </div>
+
+  <script src="admin-check.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const orderForm = document.getElementById('order-form');
+      const currencyForm = document.getElementById('currency-form');
+      const viewCardsButton = document.getElementById('viewCardsButton');
+      const viewOrdersButton = document.getElementById('viewOrdersButton');
+      const cardsModal = document.getElementById('cardsModal');
+      const ordersModal = document.getElementById('ordersModal');
+      const closeCardsModalButton = cardsModal.querySelector('.close');
+      const closeOrdersModalButton = ordersModal.querySelector('.close');
+      const cardsBody = document.getElementById('cards-body');
+      const orderList = document.getElementById('order-list');
+      const logElement = document.getElementById('log');
+      const token = localStorage.getItem('adminToken');
+
+      const editModal = document.getElementById('editModal');
+      const closeEditModalButton = editModal.querySelector('.close');
+      const saveEditButton = document.getElementById('saveEdit');
+      const editStatusInput = document.getElementById('editStatus');
+      const toggleAutoOrderButton = document.getElementById('toggleAutoOrderButton');
+      let currentEditOrderId = null;
+
+      // Флаг для автоматической отправки заявок
+      let autoOrderEnabled = localStorage.getItem('autoOrderEnabled') === 'true';
+      let autoOrderTimeout; // Тайм-аут для случайного интервала
+
+      function logMessage(message) {
+        const logEntry = document.createElement('div');
+        logEntry.textContent = message;
+        logElement.appendChild(logEntry);
+        logElement.scrollTop = logElement.scrollHeight;
+      }
+
+      function updateToggleButton() {
+        toggleAutoOrderButton.textContent = autoOrderEnabled ? 'Disable Auto Orders' : 'Enable Auto Orders';
+      }
+
+      // Обработчик кнопки включения/отключения автоматической отправки заявок
+      toggleAutoOrderButton.addEventListener('click', function() {
+        autoOrderEnabled = !autoOrderEnabled;
+        localStorage.setItem('autoOrderEnabled', autoOrderEnabled);
+        updateToggleButton();
+
+        if (autoOrderEnabled) {
+          setRandomInterval();
+          logMessage('Automatic order sending enabled');
+        } else {
+          clearTimeout(autoOrderTimeout);
+          logMessage('Automatic order sending disabled');
+        }
+      });
+
+      orderForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const username = document.getElementById('username').value.trim();
+        const orderSum = document.getElementById('orderSum').value.trim();
+        const orderRate = document.getElementById('orderRate').value.trim();
+        const orderStatus = document.getElementById('orderStatus').value.trim();
+        const orderAccount = document.getElementById('orderAccount').value.trim();
+        const orderDate = document.getElementById('orderDate').value.trim();
+
+        const orderData = {
+          username,
+          orderSum,
+          orderRate,
+          orderStatus,
+          orderAccount,
+          orderDate
+        };
+
+        fetch('http://localhost:3000/api/admin/orders', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': token
+          },
+          body: JSON.stringify(orderData)
+        })
+        .then(response => response.json())
+        .then(data => {
+          logMessage(`Order added: ${JSON.stringify(data)}`);
+          loadOrders(); // Перезагрузить список заказов после добавления
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          logMessage(`Error adding order: ${error.message}`);
+        });
+      });
+
+      currencyForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const rate = document.getElementById('currencyRate').value.trim();
+
+        fetch('http://localhost:3000/api/admin/currency', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': token
+          },
+          body: JSON.stringify({ rate })
+        })
+        .then(response => response.json())
+        .then(data => {
+          alert('Currency rate updated successfully'); // Успешное обновление курса валюты
+          logMessage(`Currency rate updated: ${rate}`);
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          logMessage(`Error updating currency rate: ${error.message}`);
+        });
+      });
+
+      viewCardsButton.addEventListener('click', function() {
+        fetch('http://localhost:3000/api/admin/cards', {
+          method: 'GET',
+          headers: {
+            'Authorization': token
+          }
+        })
+        .then(response => response.json())
+        .then(cards => {
+          cardsBody.innerHTML = '';
+
+          cards.forEach(card => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td>${card.id}</td>
+              <td>${card.username}</td>
+              <td>${card.method_name}</td>
+              <td>${card.card_number}</td>
+              <td>${card.cardholder}</td>
+              <td>${new Date(card.creation_date).toLocaleString()}</td>
+            `;
+            cardsBody.appendChild(row);
+          });
+
+          cardsModal.style.display = 'block';
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          logMessage(`Error loading cards: ${error.message}`);
+        });
+      });
+
+      viewOrdersButton.addEventListener('click', function() {
+        loadOrders(); // Перезагрузить список заказов
+        ordersModal.style.display = 'block';
+      });
+
+      closeCardsModalButton.addEventListener('click', function() {
+        cardsModal.style.display = 'none';
+      });
+
+      closeOrdersModalButton.addEventListener('click', function() {
+        ordersModal.style.display = 'none';
+      });
+
+      window.addEventListener('click', function(event) {
+        if (event.target === cardsModal) {
+          cardsModal.style.display = 'none';
+        } else if (event.target === ordersModal) {
+          ordersModal.style.display = 'none';
+        }
+      });
+
+      closeEditModalButton.addEventListener('click', function() {
+        editModal.style.display = 'none';
+      });
+
+      saveEditButton.addEventListener('click', function() {
+        const newStatus = editStatusInput.value.trim();
+
+        fetch(`http://localhost:3000/api/admin/orders/${currentEditOrderId}`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': token
+          },
+          body: JSON.stringify({ orderStatus: newStatus })
+        })
+        .then(response => response.json())
+        .then(data => {
+          editModal.style.display = 'none';
+          loadOrders(); // Перезагрузить список заказов после редактирования
+          logMessage(`Order ${currentEditOrderId} status updated to: ${newStatus}`);
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          logMessage(`Error updating order status: ${error.message}`);
+        });
+      });
+
+      function openEditModal(orderId, currentStatus) {
+        currentEditOrderId = orderId;
+        editStatusInput.value = currentStatus;
+        editModal.style.display = 'block';
+      }
+
+      // Функция для загрузки и отображения заказов
+      function loadOrders() {
+        fetch('http://localhost:3000/api/admin/orders', {
+          method: 'GET',
+          headers: {
+            'Authorization': token
+          }
+        })
+        .then(response => response.json())
+        .then(orders => {
+          orderList.innerHTML = '';
+
+          orders.forEach(order => {
+            const orderItem = document.createElement('div');
+            orderItem.className = 'order-item';
+            orderItem.innerHTML = `
+              <span>${order.username} - ${order.orderSum} - ${order.orderRate} - ${order.orderStatus} - ${order.orderAccount} - ${order.orderDate}</span>
+              <div class="order-buttons">
+                <button class="edit-button" data-id="${order.id}" data-status="${order.orderStatus}">Edit</button>
+                <button class="delete-button" data-id="${order.id}">Delete</button>
+              </div>
+            `;
+            orderList.appendChild(orderItem);
+
+            // Добавление события для редактирования заказа
+            orderItem.querySelector('.edit-button').addEventListener('click', function() {
+              const orderId = this.getAttribute('data-id');
+              const currentStatus = this.getAttribute('data-status');
+              openEditModal(orderId, currentStatus);
+            });
+
+            // Добавление события для удаления заказа
+            orderItem.querySelector('.delete-button').addEventListener('click', function() {
+              const orderId = this.getAttribute('data-id');
+
+              fetch(`http://localhost:3000/api/admin/orders/${orderId}`, {
+                method: 'DELETE',
+                headers: {
+                  'Authorization': token
+                }
+              })
+              .then(response => response.json())
+              .then(data => {
+                loadOrders(); // Перезагрузить список заказов после удаления
+                logMessage(`Order ${orderId} deleted`);
+              })
+              .catch(error => {
+                console.error('Error:', error);
+                logMessage(`Error deleting order: ${error.message}`);
+              });
+            });
+          });
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          logMessage(`Error loading orders: ${error.message}`);
+        });
+      }
+
+      // Загрузка заказов при загрузке страницы
+      loadOrders();
+
+      // Функция для отправки случайных заявок
+      function sendRandomOrder() {
+        if (!autoOrderEnabled) return;
+        fetch('http://localhost:3000/api/users', {
+          method: 'GET',
+          headers: {
+            'Authorization': token
+          }
+        })
+        .then(response => response.json())
+        .then(users => {
+          const eligibleUsers = users.filter(user => user.role !== 'admin');
+          const randomUser = eligibleUsers[Math.floor(Math.random() * eligibleUsers.length)];
+
+          fetch(`http://localhost:3000/api/admin/users/${randomUser.id}/payment_methods`, {
+            method: 'GET',
+            headers: {
+              'Authorization': token
+            }
+          })
+          .then(response => response.json())
+          .then(methods => {
+            if (methods.length > 0) {
+              const randomMethod = methods[Math.floor(Math.random() * methods.length)];
+              let orderSum = Math.floor(Math.random() * (50000 - 4000 + 1)) + 4000;
+              orderSum = Math.round(orderSum / 10) * 10; // Округляем до ближайшего числа, кратного 10
+
+              fetch(`http://localhost:3000/api/users/${randomUser.id}/balance`, {
+                method: 'GET',
+                headers: {
+                  'Authorization': token
+                }
+              })
+              .then(response => response.json())
+              .then(balanceData => {
+                if (balanceData.balance >= orderSum) {
+                  fetch('http://localhost:3000/api/currency')
+                    .then(response => response.json())
+                    .then(currencyData => {
+                      const currentRate = currencyData.rate ? currencyData.rate : 80;
+                      let orderRate = (orderSum / currentRate).toFixed(3); // Округление до тысячных
+                      orderRate = parseFloat(orderRate); // Убираем лишние нули
+
+                      const orderData = {
+                        username: randomUser.username,
+                        orderSum: orderSum,
+                        orderRate: orderRate,
+                        orderStatus: 'Awaiting',
+                        orderAccount: randomMethod.card_number,
+                        orderDate: new Date().toISOString().split('T')[0]
+                      };
+
+                      fetch('http://localhost:3000/api/admin/orders', {
+                        method: 'POST',
+                        headers: {
+                          'Content-Type': 'application/json',
+                          'Authorization': token
+                        },
+                        body: JSON.stringify(orderData)
+                      })
+                      .then(response => response.json())
+                      .then(data => {
+                        logMessage(`Random order added: ${JSON.stringify(data)}`);
+                      })
+                      .catch(error => {
+                        console.error('Error:', error);
+                        logMessage(`Error adding random order: ${error.message}`);
+                      });
+                    });
+                } else {
+                  logMessage(`Insufficient balance for user: ${randomUser.username}`);
+                }
+              })
+              .catch(error => {
+                console.error('Error fetching user balance:', error);
+                logMessage(`Error fetching balance for user: ${randomUser.username}, error: ${error.message}`);
+              });
+            } else {
+              logMessage(`No payment methods for user: ${randomUser.username}`);
+            }
+          })
+          .catch(error => {
+            console.error('Error fetching user payment methods:', error);
+            logMessage(`Error fetching payment methods for user: ${randomUser.username}, error: ${error.message}`);
+          });
+        })
+        .catch(error => {
+          console.error('Error fetching users:', error);
+          logMessage(`Error fetching users: ${error.message}`);
+        });
+
+        // Задаем следующий случайный интервал
+        setRandomInterval();
+      }
+
+      // Функция для задания случайного интервала
+      function setRandomInterval() {
+        if (!autoOrderEnabled) return;
+        const min = 30000; // 30 секунд
+        const max = 300000; // 5 минут
+        const randomInterval = Math.floor(Math.random() * (max - min + 1)) + min;
+        setTimeout(sendRandomOrder, randomInterval);
+      }
+
+      // Восстановить состояние кнопки при загрузке страницы
+      updateToggleButton();
+
+      // Запуск функции отправки заявок с случайным интервалом
+      setRandomInterval();
+    });
+  </script>
+</body>
+</html>

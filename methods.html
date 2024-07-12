@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Bank Details</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="reset.css">
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="favicon.ico" type="image/x-icon"> <!-- Добавление фавикона -->
+  <style>
+    .methods-container {
+    text-align: left;
+    padding-top: 20px; 
+    }
+    .methods-container h1 {
+    text-align: center;
+    }
+    .methods-button {
+    width: 100%;
+    padding: 10px;
+    background-color: black;
+    color: white;
+    border: none;
+    font-weight: bold;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    }
+    .methods-button:hover {
+    background-color: #333;
+    }
+    .methods-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    .methods-table th,
+    .methods-table td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: left;
+    }
+    .methods-table th {
+    background-color: #f5f5f5;
+    border-bottom: 2px solid #ccc;
+    }
+    .modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+    }
+    .modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 500px;
+    border-radius: 4px;
+    }
+    .close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    }
+    .close:hover,
+    .close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+    }
+    .modal-input {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+    }
+    .modal-save-button {
+    width: 100%;
+    padding: 10px;
+    background-color: black;
+    color: white;
+    border: none;
+    font-weight: bold;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 10px;
+    }
+    .modal-save-button:hover {
+    background-color: #333;
+    }
+
+    @media (max-width: 820px) {
+        .methods-table {
+            display: block;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+        .methods-table th,
+        .methods-table td {
+            font-size: 12px;
+        }
+
+        .methods-button {
+            display: block;
+            width: auto;
+            font-size: 12px;
+            margin-top: -20px;
+        }
+        .methods-table td button.methods-button {
+            margin-top: 0px; /* Добавить отступ сверху */
+        }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <div class="header__top">
+        <div class="logo">
+          <img src="logo.svg" alt="">
+          <span class="current-tab">Bank Details</span>
+        </div>
+        <div id="currency-rate" class="currency-rate"></div>
+        <nav class="menu">
+          <button class="menu__toggle" aria-label="Toggle menu">
+            <span class="menu__icon"></span>
+            <span class="menu__icon"></span>
+            <span class="menu__icon"></span>
+          </button>
+          <ul class="menu__list">
+            <li class="menu__item">
+              <a class="menu__link" href="index.html">Main</a>
+            </li>
+            <li class="menu__item">
+              <a class="menu__link" href="orders.html">Requests</a>
+            </li>
+            <li class="menu__item">
+              <a class="menu__link" href="appeals.html">Disputes</a>
+            </li>
+            <li class="menu__item">
+              <a class="menu__link" href="balance.html">Finance</a>
+            </li>
+            <li class="menu__item">
+              <a class="menu__link" href="statistics.html">Stat</a>
+            </li>
+            <li class="menu__item methods active">
+              <a class="menu__link" href="methods.html">Bank Details</a>
+            </li>
+            <li class="menu__item">
+              <button class="logout-button" id="logoutButton"></button>
+            </li>
+          </ul>
+        </nav>
+      </div>
+      <div class="header__content methods-container">
+        <button id="openModal" class="methods-button">Add new</button>
+        <div class="methods-list" style="overflow-x: auto;">
+            <table class="methods-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Name</th>
+                  <th>Number</th>
+                  <th>Cardholder</th>
+                  <th>Creation Date</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="methods-body">
+                <!-- Список методов будет отображаться здесь -->
+              </tbody>
+            </table>
+          </div>          
+      </div>
+    </div>
+    <div class="overlay"></div>
+  </header>
+
+  <div id="myModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>New Bank Detail</h2>
+      <input type="text" id="method_name" class="modal-input" placeholder="Name of method">
+      <input type="text" id="card_number" class="modal-input" placeholder="Card number">
+      <input type="text" id="cardholder" class="modal-input" placeholder="Full cardholder name">
+      <button id="saveMethod" class="modal-save-button">Save changes</button>
+    </div>
+  </div>
+
+  <script src="auth-check.js"></script>
+  <script src="logout.js"></script>
+  <script src="main.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        window.location.href = 'login.html';
+      } else {
+        // Получение текущего курса валют
+        fetch('http://localhost:3000/api/currency')
+          .then(response => response.json())
+          .then(data => {
+            const currencyRateElement = document.getElementById('currency-rate');
+            currencyRateElement.textContent = `1 USDT = ${data.rate} RUB`;
+          })
+          .catch(error => console.error('Error fetching currency rate:', error));
+      }
+    });
+  </script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const token = localStorage.getItem('token');
+      const methodsBody = document.getElementById('methods-body');
+      const openModalButton = document.getElementById('openModal');
+      const modal = document.getElementById('myModal');
+      const closeModalButton = document.querySelector('.close');
+      const saveMethodButton = document.getElementById('saveMethod');
+      const methodNameInput = document.getElementById('method_name');
+      const cardNumberInput = document.getElementById('card_number');
+      const cardholderInput = document.getElementById('cardholder');
+
+      if (!token) {
+        window.location.href = 'login.html';
+      } else {
+        const loadMethods = () => {
+          fetch('http://localhost:3000/api/payment_methods', {
+            method: 'GET',
+            headers: {
+              'Authorization': token
+            }
+          })
+          .then(response => response.json())
+          .then(data => {
+            methodsBody.innerHTML = '';
+            data.forEach(method => {
+              const row = document.createElement('tr');
+              row.innerHTML = `
+                <td>${method.id}</td>
+                <td>${method.method_name}</td>
+                <td>${method.card_number}</td>
+                <td>${method.cardholder}</td>
+                <td>${method.creation_date}</td>
+                <td><button class="methods-button" data-id="${method.id}">Delete</button></td>
+              `;
+              methodsBody.appendChild(row);
+
+              row.querySelector('.methods-button').addEventListener('click', function() {
+                const methodId = this.getAttribute('data-id');
+
+                fetch(`http://localhost:3000/api/payment_methods/${methodId}`, {
+                  method: 'DELETE',
+                  headers: {
+                    'Authorization': token
+                  }
+                })
+                .then(response => response.json())
+                .then(data => {
+                  loadMethods();
+                })
+                .catch(error => console.error('Error:', error));
+              });
+            });
+          })
+          .catch(error => console.error('Error:', error));
+        };
+
+        loadMethods();
+
+        openModalButton.addEventListener('click', function() {
+          modal.style.display = 'block';
+        });
+
+        closeModalButton.addEventListener('click', function() {
+          modal.style.display = 'none';
+        });
+
+        window.addEventListener('click', function(event) {
+          if (event.target === modal) {
+            modal.style.display = 'none';
+          }
+        });
+
+        saveMethodButton.addEventListener('click', function() {
+          const methodName = methodNameInput.value.trim();
+          const cardNumber = cardNumberInput.value.trim();
+          const cardholder = cardholderInput.value.trim();
+
+          fetch('http://localhost:3000/api/payment_methods', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': token
+            },
+            body: JSON.stringify({ method_name: methodName, card_number: cardNumber, cardholder })
+          })
+          .then(response => response.json())
+          .then(data => {
+            modal.style.display = 'none';
+            loadMethods();
+          })
+          .catch(error => console.error('Error:', error));
+        });
+        // Обработчик события клика для кнопки выхода
+        document.getElementById('logoutButton').addEventListener('click', function() {
+          localStorage.removeItem('token');
+          window.location.href = 'login.html';
+        });
+      }
+    });
+  </script>
+</body>
+</html>

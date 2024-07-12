@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Disputes</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="reset.css">
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="favicon.ico" type="image/x-icon"> <!-- Добавление фавикона -->
+  <style>
+    .appeals-container {
+      overflow-x: auto;
+      padding-bottom: 10px; /* Добавим немного отступа снизу для улучшения визуального эффекта */
+    }
+    .orders-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background-color: #fff; /* Белый фон для таблицы */
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Лёгкая тень для улучшения видимости */
+    }
+    .orders-table th,
+    .orders-table td {
+      padding: 10px;
+      border: 1px solid #ddd;
+      text-align: left;
+    }
+    .orders-table th {
+      background-color: #f5f5f5; /* Светло-серый фон для заголовков */
+      border-bottom: 2px solid #ccc; /* Более толстая нижняя рамка для заголовков */
+    }
+    .approve-button {
+      font-family: 'Inter', sans-serif;
+      font-size: 16px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 10px 20px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      margin-right: 5px; /* Отступ между кнопками */
+    }
+    .approve-button:hover {
+      background-color: #0056b3; /* Темно-синий фон при наведении */
+    }
+    .cancel-button {
+      font-family: 'Inter', sans-serif;
+      font-size: 16px;
+      background-color: #dc3545;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 10px 20px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    .cancel-button:hover {
+      background-color: #c82333; /* Темно-красный фон при наведении */
+    }
+    @keyframes fadeOut {
+      from {
+        opacity: 1;
+      }
+      to {
+        opacity: 0;
+      }
+    }
+    .fade-out {
+      animation: fadeOut 1s forwards;
+    }
+    @media (max-width: 820px) {
+      .approve-button, .cancel-button {
+        font-size: 14px; /* Уменьшенный размер шрифта для мобильных устройств */
+        padding: 8px 16px; /* Уменьшенные отступы для мобильных устройств */
+        font-size: 12px;
+      }
+      .appeals-container {
+        overflow-x: auto;
+        padding-bottom: 10px;
+      }
+      .orders-table {
+        margin: 0;
+        width: 800px; /* Установите минимальную ширину для обеспечения горизонтальной прокрутки */
+      }
+      .orders-table th,
+      .orders-table td {
+        font-size: 12px; /* Меньший размер шрифта для мобильных устройств */
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <div class="header__top">
+        <div class="logo">
+          <img src="logo.svg" alt="">
+          <span class="current-tab">Disputes</span>
+        </div>
+        <div id="currency-rate" class="currency-rate"></div>
+        <nav class="menu">
+          <button class="menu__toggle" aria-label="Toggle menu">
+            <span class="menu__icon"></span>
+            <span class="menu__icon"></span>
+            <span class="menu__icon"></span>
+          </button>
+          <ul class="menu__list">
+            <li class="menu__item">
+              <a class="menu__link" href="index.html">Main</a>
+            </li>
+            <li class="menu__item">
+              <a class="menu__link" href="orders.html">Requests</a>
+            </li>
+            <li class="menu__item active">
+              <a class="menu__link" href="appeals.html">Disputes</a>
+            </li>
+            <li class="menu__item">
+              <a class="menu__link" href="balance.html">Finance</a>
+            </li>
+            <li class="menu__item">
+              <a class="menu__link" href="statistics.html">Stat</a>
+            </li>
+            <li class="menu__item methods">
+              <a class="menu__link" href="methods.html">Bank Details</a>
+            </li>
+            <li class="menu__item">
+              <button class="logout-button" id="logoutButton"></button>
+            </li>
+          </ul>
+        </nav>
+      </div>
+      <div class="header__content header__content--orders">
+        <div class="header__content-images appeals-container">
+          <table class="orders-table">
+            <thead>
+              <tr>
+                <th>Number</th>
+                <th>RUB</th>
+                <th>USDT</th>
+                <th>Status</th>
+                <th>Card Number</th>
+                <th>Time</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Здесь будут строки с данными заказов -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="overlay"></div>
+  </header>
+
+  <script src="auth-check.js"></script>
+  <script src="main.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const token = localStorage.getItem('token');
+
+      if (!token) {
+        window.location.href = 'login.html';
+      } else {
+        // Проверка токена на сервере
+        fetch('http://localhost:3000/api/protected', {
+          method: 'GET',
+          headers: {
+            'Authorization': token
+          }
+        })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Unauthorized');
+          }
+          // Получение заказов
+          return fetch('http://localhost:3000/api/orders', {
+            method: 'GET',
+            headers: {
+              'Authorization': token
+            }
+          });
+        })
+        .then(response => response.json())
+        .then(orders => {
+          const ordersTableBody = document.querySelector('.orders-table tbody');
+          ordersTableBody.innerHTML = '';
+
+          orders.forEach(order => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td>${order.id}</td>
+              <td>${order.orderSum}</td>
+              <td>${order.orderRate}</td>
+              <td>${order.orderStatus}</td>
+              <td>${order.orderAccount}</td>
+              <td>${order.orderDate}</td>
+              <td class="table-actions">
+                <button class="approve-button" data-order-id="${order.id}" data-order-rate="${order.orderRate}">Approve</button>
+                <button class="cancel-button" data-order-id="${order.id}">Cancel</button>
+              </td>
+            `;
+            ordersTableBody.appendChild(row);
+
+            // Добавление события для одобрения заказа
+            row.querySelector('.approve-button').addEventListener('click', function() {
+              const orderId = this.getAttribute('data-order-id');
+              const orderRate = parseFloat(this.getAttribute('data-order-rate'));
+
+              // Получаем текущий баланс пользователя
+              fetch('http://localhost:3000/api/balance', {
+                method: 'GET',
+                headers: {
+                  'Authorization': token
+                }
+              })
+              .then(response => response.json())
+              .then(data => {
+                const currentBalance = parseFloat(data.balance);
+
+                if (currentBalance >= orderRate) {
+                  // Отправляем запрос на одобрение заказа, если достаточно средств
+                  fetch(`http://localhost:3000/api/orders/approve/${orderId}`, {
+                    method: 'POST',
+                    headers: {
+                      'Authorization': token
+                    }
+                  })
+                  .then(response => response.json())
+                  .then(data => {
+                    if (data.message === 'Order approved and deleted successfully') {
+                      // Изменение статуса на "Approved"
+                      row.cells[3].textContent = 'Approved';
+                      
+                      // Удаление строки через секунду
+                      row.classList.add('fade-out');
+                      setTimeout(() => {
+                        row.remove();
+                      }, 1000);
+                    }
+                  })
+                  .catch(error => {
+                    console.error('Error approving order:', error);
+                  });
+                } else {
+                  alert('Недостаточно средств на балансе для одобрения заказа');
+                }
+              })
+              .catch(error => {
+                console.error('Error fetching balance:', error);
+              });
+            });
+
+            row.querySelector('.cancel-button').addEventListener('click', function() {
+              const orderId = this.getAttribute('data-order-id');
+
+              fetch(`http://localhost:3000/api/orders/cancel/${orderId}`, {
+                method: 'POST',
+                headers: {
+                  'Authorization': token
+                }
+              })
+              .then(response => response.json())
+              .then(data => {
+                if (data.message === 'Order cancelled successfully') {
+                  row.cells[3].textContent = 'Cancelled';
+                  row.classList.add('fade-out');
+                  setTimeout(() => {
+                    row.remove();
+                  }, 1000);
+                }
+              })
+              .catch(error => {
+                console.error('Error cancelling order:', error);
+              });
+            });
+          });
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          localStorage.removeItem('token');
+          window.location.href = 'login.html';
+        });
+
+        fetch('http://localhost:3000/api/currency')
+          .then(response => response.json())
+          .then(data => {
+            const currencyRateElement = document.getElementById('currency-rate');
+            currencyRateElement.textContent = `1 USDT = ${data.rate} RUB`;
+          })
+          .catch(error => console.error('Error fetching currency rate:', error));
+
+        document.getElementById('logoutButton').addEventListener('click', function() {
+          localStorage.removeItem('token');
+          window.location.href = 'login.html';
+        });
+      }
+    });
+  </script>
+</body>
+</html>
